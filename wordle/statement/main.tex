@@ -1,0 +1,228 @@
+
+\documentclass{article}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[width=14cm]{geometry}
+
+\usepackage{xcolor}
+\colorlet{light-gray}{gray!10}
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+\lstset{
+  language=Caml,
+basicstyle=\footnotesize\ttfamily,
+keywordstyle=\color{javapurple}\bfseries,
+stringstyle=\color{javared},
+commentstyle=\color{javagreen},
+morecomment=[s][\color{javadocblue}]{/**}{*/},
+numbers=left,
+numberstyle=\tiny\color{black},
+stepnumber=1,
+numbersep=10pt,
+tabsize=4,
+showspaces=false,
+showstringspaces=false,
+keepspaces = true,
+%    frame=single,
+mathescape=true, % allows $ $ notation
+backgroundcolor=\color{light-gray},
+breaklines=true,
+postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}}
+
+\newcommand{\code}[1]{\lstinline!#1!}
+\newcommand{\logo}{Mini-Logo}
+
+
+\title{CS 496: Assignment 1\\
+Due: May 31, 11:55pm}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+
+\section{Assignment Policies}
+
+\paragraph{Collaboration Policy.}
+%Homework will be done individually: each student must hand in
+%their own answers.
+It is acceptable for students to collaborate in understanding the material but
+not in solving the problems or programming. Use of the Internet is allowed, but should not include
+searching for existing solutions.
+
+\paragraph{Under absolutely no circumstances code can be exchanged between students.} Excerpts of
+code presented in class can be used.
+
+\paragraph{Assignments from previous offerings of the course must not be re-used.} Violations will be penalized
+appropriately.
+
+\section{Assignment}
+
+This project seeks to help you get some practice with lists and
+tuples. It is based off of the Wordle game from New York Times (\url{https://www.nytimes.com/games/wordle/index.html}). If you haven't played this game, what are you doing?! This implementation looks a lot simpler compared to the original. The UI is composed of ASCII characters.
+
+
+To run the game, first install an \code{opam} package \code{csv}. This is needed to load a word bank of 5 letter words. You are welcome to add additional words to the word bank. Then, in \code{utop}, run
+\begin{center}
+  \code{#use "wordle.ml";;}
+  \end{center}
+You can quit the game by entering \code{quit} or \code{exit}.
+
+
+\subsection{Game State of ASCII Wordle}
+
+The game state has three parts: \code{w_h, kb, the_word}.
+
+The first part is wordle history. It keeps track of all the guesses made. Since there are a total of 6 guesses of 5 letter words, it is a list of 6 strings, initially comprised of 5 underlines each. The underlines are also used for display purposes. Every time a word is guessed, a blank string is replaced by the guess, starting from the left. Wordle history is named \code{w_h} as shown below:
+\begin{lstlisting}
+let w_h = ["_____";"_____";"_____";"_____";"_____";"_____"]
+\end{lstlisting}
+The second part is keyboard. It is a list of strings that mimics the keyboard layout. The spaces are there for display purposes. As the game progresses, letters that are not present in the target word will be removed from it. Keyboard is named \code{kb} as shown below:
+\begin{lstlisting}
+let kb = ["QWERTYUIOP";" ASDFGHJKL";"  ZXCVBNM"]
+\end{lstlisting}
+The third part is the target word. It is a hard coded answer converted to uppercase. You can change the target word to any 5 letter word, as long as it is in the word bank. The game also converts all player inputs to uppercase. The target word is named \code{the_word} as shown below:
+\begin{lstlisting}
+let the_word = String.uppercase_ascii "ocaml"
+\end{lstlisting}
+
+\subsection{Exercises}
+
+
+\begin{enumerate}
+\item Implement a function 
+  \begin{center}
+    \code{process_data : string list list -> string list}
+  \end{center}
+ that converts the word bank \code{csv} data \code{word_bank_src} that is a list of lists of strings in to a list of strings. You must also convert every string to uppercase.
+
+Propose two solutions:
+\begin{enumerate}
+\item \code{process_data} without using fold (e.g. using explicit matching \code{match})
+
+\item   \code{process_data_fold} using fold. 
+\end{enumerate}
+ 
+
+\item Implement a function 
+  \begin{center}
+    \code{is_word_valid : string -> bool}
+  \end{center}
+ that checks whether a word exists in the word bank \code{word_bank}. 
+
+
+\item Implement a function 
+  \begin{center}
+    \code{space_out_word : string -> string}
+  \end{center}
+that returns a new string where characters are separated by one space character. 
+For example
+\begin{lstlisting}
+# space_out_word "OCAML";;
+- : string = "O C A M L";;
+\end{lstlisting}
+Trailing space is allowed.
+ 
+
+\item Implement a function
+
+  \begin{center}
+    \code{rm_letter : string list -> char -> string list}
+  \end{center}
+that given the current keyboard and a letter to remove, returns a new keyboard where the letter is replaced by a space character. For example:
+\begin{lstlisting}
+# rm_letter kb 'D';;
+- : string list = ["QWERTYUIOP"; " AS FGHJKL"; "  ZXCVBNM"]
+\end{lstlisting}
+You must use recursion for this function.
+
+
+\item Implement a function
+  \begin{center}
+    \code{new_kb : string list -> string -> int -> string list}
+  \end{center}
+such that \code{new_kb kb word idx} returns a new keyboard with letters from \code{word} that are not present in \code{the_word} removed from \code{kb}. \code{idx} is used track the nth character in \code{word}, starting from 0. For example with \code{the_word = "OCAML"}:
+\begin{lstlisting}
+new_kb kb "WRONG" 0;;
+- : string list = ["Q E TYUIOP"; " ASDF HJKL"; "  ZXCVB M"]
+\end{lstlisting}
+hint: use \code{rm_letter}
+
+ 
+\item  Implement a function
+  \begin{center}
+    \code{fill_in_the_blanks : string -> string -> string}
+  \end{center}
+such that \code{fill_in_the_blanks blanks word} returns a string that tells the player which of the 5 letters have been guessed. Due to limitations of ASCII display, we will communicate the progress to the player via \code{letters in the right spots} and \code{correct letters}. 
+
+\code{letters in the right spots} is 5 blanks that will be revealed once the correct letter at the correct spot has been guessed. For example with target word \code{"OCAML"}, if we have guessed \code{"OCCUR"}, then \code{letters in the right spots} would be \code{OC___}.
+
+\code{correct letters} is a list of letters that are letters in the target word, but are not one of \code{letters in the right spots}. For example with target word \code{"OCAML"}, if we have guessed \code{"MASON"}, then \code{correct letters} would be \code{O A M}.  
+
+For this function, we only focus on \code{letters in the right spots}.
+For example with target word \code{"OCAML"}, if we guess the word \code{"CAMEL"} and the first letter \code{"O"} has already been revealed:
+\begin{lstlisting}
+# fill_in_the_blanks "O____" "CAMEL";;
+- : string = "O___L"
+\end{lstlisting}
+
+
+\item Implement a function
+
+  \begin{center}
+    \code{rm_dup : 'a list -> 'a list}
+  \end{center}
+that removed duplicates from a list. You must NOT use recursion. For example
+\begin{lstlisting}
+# rm_dup ["M";"C";"D";"C"];;
+- : string list = ["M"; "D"; "C"]
+\end{lstlisting}
+ 
+
+\item Implement a function
+
+  \begin{center}
+    \code{get_good_letters : string -> string list}
+  \end{center}
+such that \code{get_good_letters word} returns get a list of the letters from \code{word} that are also in the target word \code{the_word}, regardless of position. For example with target word \code{"OCAML"}:
+\begin{lstlisting}
+# get_good_letters "MILLS";;
+- : string list = ["L"; "L"; "M"]
+\end{lstlisting}
+
+
+\item Implement a function
+
+  \begin{center}
+    \code{pcl_helper : string -> string list -> string}
+  \end{center}
+that helps function \code{print_correct_letters} format the \code{correct letters} section, as mentioned in exercise 6. The function \code{pcl_helper blanks good_letters} returns a string composed of spaced out letters that are present in the target word \code{the_word}, but NOT present in the string \code{blanks}. For example with target word \code{"OCAML"}:
+\begin{lstlisting}
+# pcl_helper "OCA__" ["O";"C";"M";"L";"L"];;
+- : string = "M L"
+\end{lstlisting}
+
+
+\end{enumerate}
+\section{Submission instructions}
+Submit a single file named \texttt{wordle.ml} through Canvas. No report is required. Your
+grade will be determined as follows:
+\begin{itemize}
+\item You will get 0 points if your code does not compile.
+%\item We will try to feed erroneous and inconsistent inputs to all functions. All arguments
+%  should be checked.
+\item Partial credit may be given for style, comments and readability.
+\end{itemize}
+
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
