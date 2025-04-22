@@ -1,0 +1,117 @@
+Submitted with _:
+
+
+
+
+============================================================
+
+#use "file_name.ml";;
+
+let t3 : int bt = { root = Some {data = 1; left = None; right = None}; size = 1};;
+
+
+height t1;;
+- : int = 0
+height t2;;
+- : int = 3
+height t3;;
+- : int = 1
+
+
+mem 23 t2;;
+- : bool = false
+mem 33 t2;;
+- : bool = true
+mem 1 t1;;
+- : bool = false
+mem 1 t3;;
+- : bool = true
+mem 2 t3;;
+- : bool = false
+
+
+preorder t1;;
+- : int list = []
+preorder t2;;
+- : int list = [33; 22; 44; 37]
+preorder t3;;
+- : int list = [1]
+
+
+map ( fun i -> i+1 ) t1; t1;;
+- : { root = None; size = 0 }
+map ( fun i -> i+1 ) t2; t2;;
+- : int bt =
+{root =
+  Some
+   {data = 34; left = Some {data = 23; left = None; right = None};
+    right =
+     Some
+      {data = 45; left = Some {data = 38; left = None; right = None};
+       right = None}};
+ size = 4}
+map ( fun i -> i-1 ) t2; t2;;
+- : int bt =
+{root =
+  Some
+   {data = 33; left = Some {data = 22; left = None; right = None};
+    right =
+     Some
+      {data = 44; left = Some {data = 37; left = None; right = None};
+       right = None}};
+ size = 4}
+
+
+mirror t1; t1;;
+- : { root = None; size = 0 }
+mirror t2; t2;;
+- : int bt =
+{root =
+  Some
+   {data = 33;
+    left =
+     Some
+      {data = 44; left = None;
+       right = Some {data = 37; left = None; right = None}};
+    right = Some {data = 22; left = None; right = None}};
+ size = 4}
+mirror t2; t2;;
+- : int bt =
+{root =
+  Some
+   {data = 33; left = Some {data = 22; left = None; right = None};
+    right =
+     Some
+      {data = 44; left = Some {data = 37; left = None; right = None};
+       right = None}};
+ size = 4}
+mirror t3; t3;;
+- : { root = Some {data = 1; left = None; right = None}; size = 1}
+
+
+add 1 t1; t1;;
+- : { root = Some {data = 1; left = None; right = None}; size = 1}
+add 10 t2; t2;;
+- : int bt =
+{root =
+  Some
+   {data = 33;
+    left =
+     Some
+      {data = 22; left = Some {data = 10; left = None; right = None};
+       right = None};
+    right =
+     Some
+      {data = 44; left = Some {data = 37; left = None; right = None};
+       right = None}};
+ size = 5}
+add 2 t3; t3;;
+- : int bt =
+{root =
+  Some
+   {data = 1; left = None; right = Some {data = 2; left = None; right = None}};
+ size = 2}
+
+
+
+
